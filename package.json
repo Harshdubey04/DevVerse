@@ -1,0 +1,18 @@
+{
+  "name": "devverse",
+  "version": "1.0.0",
+  "description": "The place where the devs can communicate ,collaborate and create crazy stufs...",
+  "license": "ISC",
+  "author": "Harsh Dubey",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}

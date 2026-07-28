@@ -3,26 +3,25 @@ const {connectDB}=require("./config/database");
 const app=express();
 const {User}=require("./models/user");
 
-//Middleware to convert the json to js object so that server can understand it 
+//Middleware to convert the json to js object so that server can understand it because server only understand js object
 app.use(express.json());
 
-
-//Automatic getting dynamic data using postman
+//Making signup api dynamic to get the data form the end user
 app.post("/signup",async(req,res)=>{   
-
+    const userData=req.body;
     try{      
-        const userData=req.body;
-        const user=new User({userData});
+        
+        const user=new User(userData);
         await user.save();
-        res.send("User creaeted succesfully");
+        res.send("User Successfully created...");
+        
     }
 
     catch(err){
         res.status(400).send(err.message);
-    }  
+    }   
     
 })
-
 
 
 connectDB()

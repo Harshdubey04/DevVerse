@@ -3,16 +3,17 @@ const {connectDB}=require("./config/database");
 const app=express();
 const {User}=require("./models/user");
 
+//Middleware to convert the json to js object so that server can understand it 
+app.use(express.json());
 
 
+//Automatic getting dynamic data using postman
 app.post("/signup",async(req,res)=>{   
 
     try{      
-        await User.create({
-        "firstName":"Harsh",
-        "lastName":"Dubey",
-        "age":21,
-        });
+        const userData=req.body;
+        const user=new User({userData});
+        await user.save();
         res.send("User creaeted succesfully");
     }
 

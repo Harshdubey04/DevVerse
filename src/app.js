@@ -1,8 +1,28 @@
 const express=require("express");
-
-const app=express();
-
 const {connectDB}=require("./config/database");
+const app=express();
+const {User}=require("./models/user");
+
+
+
+app.post("/signup",async(req,res)=>{   
+
+    try{      
+        await User.create({
+        "firstName":"Harsh",
+        "lastName":"Dubey",
+        "age":21,
+        });
+        res.send("User creaeted succesfully");
+    }
+
+    catch(err){
+        res.status(400).send(err.message);
+    }  
+    
+})
+
+
 
 connectDB()
 .then(()=>{

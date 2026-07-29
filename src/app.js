@@ -73,9 +73,9 @@ app.patch("/user",async(req,res)=>{
         // await User.findByIdAndUpdate(userId,{"firstName":"Kapil"});
 
         //Second Method
-        await User.findOneAndUpdate({_id:userId},{"firstName":"Kapil Bhai"});
+        await User.findOneAndUpdate({_id:userId},{"gender":"Male"},{runValidators:true});
         
-        res.send("User data updated successfully...")
+        res.send("User data updated successfully...");
     }
     catch(err){
         res.send(err.message);

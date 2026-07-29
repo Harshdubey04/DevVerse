@@ -23,6 +23,30 @@ app.post("/signup",async(req,res)=>{
     
 })
 
+//Feed API-To get all the user data form the database
+app.get("/feed",async(req,res)=>{
+    try{
+        const userData=await User.find({});
+        res.send(userData);
+    }
+    catch(err){
+        res.send(err.message);
+    }
+})
+
+//Get a user by name
+app.get("/user",async(req,res)=>{
+    try{
+        const userName=req.body.firstName;
+        const user=await User.find({firstName:userName});
+        res.send(user);
+
+    }
+    catch(err){
+        res.send(err.message);
+    }
+})
+
 
 connectDB()
 .then(()=>{

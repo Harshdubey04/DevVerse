@@ -65,15 +65,23 @@ app.delete("/user",async(req,res)=>{
     }
 })
 
-app.patch("/user",async(req,res)=>{
-        const userId=req.body._id;
+app.patch("/user/:userId",async(req,res)=>{
+        const userId=req?.params.userId;
+        const data=req.body;
+
     try{
+        const allowedUpdates=["photoURL","gender","about","skills","password"];
+        const isUpdateAllowed=Object.keys(data).every((k)=>allowedUpdates.includes(k));
 
-        //First method
-        // await User.findByIdAndUpdate(userId,{"firstName":"Kapil"});
+        if(!isUpdateAllowed){
+            throw new Error("Can't update the data");
+        }
 
-        //Second Method
-        await User.findOneAndUpdate({_id:userId},{"gender":"Male"},{runValidators:true});
+        if(data?.skills?.length>15){
+            throw new Error("Skills can't be more than 15");
+        }
+
+        await User.findOneAndUpdate({_id:userId},data,{runValidators:true});
         
         res.send("User data updated successfully...");
     }
@@ -91,7 +99,7 @@ connectDB()
 })
 })
 .catch(err=>{
-    console.log(err)
+    console.log(err.message);
 })
 
 

@@ -70,7 +70,7 @@ app.patch("/user/:userId",async(req,res)=>{
         const data=req.body;
 
     try{
-        const allowedUpdates=["photoURL","gender","about","skills","password"];
+        const allowedUpdates=["photoURL","gender","about","skills","password","emailId"];
         const isUpdateAllowed=Object.keys(data).every((k)=>allowedUpdates.includes(k));
 
         if(!isUpdateAllowed){

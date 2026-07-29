@@ -65,6 +65,23 @@ app.delete("/user",async(req,res)=>{
     }
 })
 
+app.patch("/user",async(req,res)=>{
+        const userId=req.body._id;
+    try{
+
+        //First method
+        // await User.findByIdAndUpdate(userId,{"firstName":"Kapil"});
+
+        //Second Method
+        await User.findOneAndUpdate({_id:userId},{"firstName":"Kapil Bhai"});
+        
+        res.send("User data updated successfully...")
+    }
+    catch(err){
+        res.send(err.message);
+    }
+})
+
 
 connectDB()
 .then(()=>{

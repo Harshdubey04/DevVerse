@@ -47,6 +47,24 @@ app.get("/user",async(req,res)=>{
     }
 })
 
+//Delete a user by id 
+
+app.delete("/user",async(req,res)=>{
+    const userId=req.body._id;
+    try{
+        //using findByIdAndDelete(userId)
+        // await User.findByIdAndDelete(userId);
+
+        // using findOneAndDelete({_id:userId})
+        await User.findOneAndDelete({ _id: userId });
+
+        res.send("User deleted successfully...")
+    }
+    catch(err){
+        res.send(err.message);
+    }
+})
+
 
 connectDB()
 .then(()=>{

@@ -1,7 +1,10 @@
 const express=require("express");
+require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 const {connectDB}=require("./config/database");
 const app=express();
 const {User}=require("./models/user");
+const bcrypt=require('bcrypt');
+const { validateSignupData }= require("./utils/validate");
 
 //Middleware to convert the json to js object so that server can understand it because server only understand js object
 app.use(express.json());
@@ -10,11 +13,19 @@ app.use(express.json());
 app.post("/signup",async(req,res)=>{   
     const userData=req.body;
     try{      
-        
-        const user=new User(userData);
+        //Validating the signup data
+        validateSignupData(req);
+        const {emailId,password,firstName,lastName}=req.body;
+
+        //Hashing the password
+        const hashedPassword=await bcrypt.hash(password,10);
+
+        const user=new User({
+            firstName,lastName,emailId,password:hashedPassword
+        });
+
         await user.save();
         res.send("User Successfully created...");
-        
     }
 
     catch(err){
@@ -89,7 +100,6 @@ app.patch("/user/:userId",async(req,res)=>{
         res.send(err.message);
     }
 })
-
 
 connectDB()
 .then(()=>{

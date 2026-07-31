@@ -33,7 +33,7 @@ const userSchema=mongoose.Schema({
         type:String,
         required:true,
         minLength:5,
-        maxLength:30
+        maxLength:100
     },
     age:{
         type:Number,
@@ -62,8 +62,7 @@ const userSchema=mongoose.Schema({
     about:{
         type:String,
         default:"Add something about yourself.",
-        maxLength:200,
-        minLength:30
+        maxLength:200
     },
     skills:{
         type:[String]

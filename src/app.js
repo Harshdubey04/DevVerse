@@ -5,9 +5,12 @@ const app=express();
 const {User}=require("./models/user");
 const bcrypt=require('bcrypt');
 const { validateSignupData,validateLoginData }= require("./utils/validate");
+const jwt=require('jsonwebtoken');
+const cookieParser=require("cookie-parser");
 
 //Middleware to convert the json to js object so that server can understand it because server only understand js object
 app.use(express.json());
+app.use(cookieParser());
 
 //Making signup api dynamic to get the data form the end user
 app.post("/signup",async(req,res)=>{   
@@ -41,13 +44,21 @@ app.post("/login",async(req,res)=>{
         validateLoginData(req);
         const{emailId,password}=req.body;
         const user=await User.findOne({emailId:emailId});
+
         if(!user){
             throw new Error("Invalid credentials...");
         }
+
+        const {_id}=user;
+
         //compare password
         const isPassValid=await bcrypt.compare(password,user.password);
+        
         if(isPassValid){
-            res.send("Logged in successfully...")
+            //Generate jwt token
+            const token=await jwt.sign({_id:_id},"Harsh@123");
+            res.cookie("token",token);
+            res.send("Logged in successfully...");
         }
         else{
             throw new Error("Password is incorrect...");
@@ -56,6 +67,38 @@ app.post("/login",async(req,res)=>{
     catch(err){
         res.send(err.message);
     }
+})
+
+//Profile api
+app.get("/profile",async(req,res)=>{
+    try{
+        const cookie=req.cookies;
+        // console.log("Cookie is :"+cookie);
+        const{token}=cookie;
+        // console.log("Token is :"+token);
+        if(!token){
+            return res.send("Token is unavailabel please relogin...");
+        }
+
+        //Comparing the token to get payload
+        const decodedData=await jwt.verify(token,"Harsh@123");
+        const {_id}=decodedData;
+
+        const user=await User.findById(_id);
+
+        if(!user){
+            throw new Error("User does not exist...");
+        }
+
+        console.log(user._id);
+
+        res.send(user);
+    }
+
+    catch(err){
+        res.send(err.message);
+    }
+
 })
 
 //Feed API-To get all the user data form the database

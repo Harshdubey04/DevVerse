@@ -7,6 +7,7 @@ const bcrypt=require('bcrypt');
 const { validateSignupData,validateLoginData }= require("./utils/validate");
 const jwt=require('jsonwebtoken');
 const cookieParser=require("cookie-parser");
+const {userAuth}=require("./middleware/auth");
 
 //Middleware to convert the json to js object so that server can understand it because server only understand js object
 app.use(express.json());
@@ -56,8 +57,8 @@ app.post("/login",async(req,res)=>{
         
         if(isPassValid){
             //Generate jwt token
-            const token=await jwt.sign({_id:_id},"Harsh@123");
-            res.cookie("token",token);
+            const token=await jwt.sign({_id:_id},"Harsh@123",{expiresIn:"7d"});
+            res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)});
             res.send("Logged in successfully...");
         }
         else{
@@ -65,38 +66,22 @@ app.post("/login",async(req,res)=>{
         }
     }
     catch(err){
-        res.send(err.message);
+        res.status(400).send(err.message);
     }
 })
 
 //Profile api
-app.get("/profile",async(req,res)=>{
+app.get("/profile",userAuth,async(req,res)=>{
     try{
-        const cookie=req.cookies;
-        // console.log("Cookie is :"+cookie);
-        const{token}=cookie;
-        // console.log("Token is :"+token);
-        if(!token){
-            return res.send("Token is unavailabel please relogin...");
-        }
-
-        //Comparing the token to get payload
-        const decodedData=await jwt.verify(token,"Harsh@123");
-        const {_id}=decodedData;
-
-        const user=await User.findById(_id);
-
+        const user=req.user;
         if(!user){
-            throw new Error("User does not exist...");
+            throw new Error("User not found...");
         }
-
-        console.log(user._id);
-
         res.send(user);
     }
 
     catch(err){
-        res.send(err.message);
+        res.status(400).send(err.message);
     }
 
 })

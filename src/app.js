@@ -53,11 +53,11 @@ app.post("/login",async(req,res)=>{
         const {_id}=user;
 
         //compare password
-        const isPassValid=await bcrypt.compare(password,user.password);
+        const isPassValid=await user.validatePassword(password);
         
         if(isPassValid){
             //Generate jwt token
-            const token=await jwt.sign({_id:_id},"Harsh@123",{expiresIn:"7d"});
+            const token=await user.getJWT();
             res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)});
             res.send("Logged in successfully...");
         }

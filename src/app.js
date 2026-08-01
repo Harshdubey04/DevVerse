@@ -4,7 +4,7 @@ const {connectDB}=require("./config/database");
 const app=express();
 const {User}=require("./models/user");
 const bcrypt=require('bcrypt');
-const { validateSignupData }= require("./utils/validate");
+const { validateSignupData,validateLoginData }= require("./utils/validate");
 
 //Middleware to convert the json to js object so that server can understand it because server only understand js object
 app.use(express.json());
@@ -32,6 +32,30 @@ app.post("/signup",async(req,res)=>{
         res.status(400).send(err.message);
     }   
     
+})
+
+//Login api
+app.post("/login",async(req,res)=>{
+    try{
+        //Validate login data
+        validateLoginData(req);
+        const{emailId,password}=req.body;
+        const user=await User.findOne({emailId:emailId});
+        if(!user){
+            throw new Error("Invalid credentials...");
+        }
+        //compare password
+        const isPassValid=await bcrypt.compare(password,user.password);
+        if(isPassValid){
+            res.send("Logged in successfully...")
+        }
+        else{
+            throw new Error("Password is incorrect...");
+        }
+    }
+    catch(err){
+        res.send(err.message);
+    }
 })
 
 //Feed API-To get all the user data form the database

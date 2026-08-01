@@ -22,4 +22,23 @@ const validateSignupData=(req)=>{
 
 }
 
-module.exports={validateSignupData};
+const validateLoginData=(req)=>{
+    const {password,emailId}=req.body;
+
+    if( !password || !emailId){
+        throw new Error("Enter all the fields...");
+    }
+
+    if(!validate.isEmail(emailId)){
+        throw new error("Please enter a correct email id...");
+
+    }
+
+    if(!validate.isStrongPassword(password)){
+        throw new error("Please enter a strong password...");       
+    }
+}
+
+
+
+module.exports={validateSignupData,validateLoginData};

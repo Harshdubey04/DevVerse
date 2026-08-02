@@ -21,7 +21,10 @@ const signup=async(req,res)=>{
         });
 
         await user.save();
-        res.send("User Successfully created...");
+        res.json({
+            "message":"Account Successfully created...",
+            "userData":user
+        });
     }
 
     catch(err){
@@ -51,7 +54,10 @@ const login=async(req,res)=>{
             //Generate jwt token
             const token=await user.getJWT();
             res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)});
-            res.send("Logged in successfully...");
+            res.json({
+                "message":"Logged in successfully...",
+                "userData":user
+            });
         }
         else{
             throw new Error("Password is incorrect...");

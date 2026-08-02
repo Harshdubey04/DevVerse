@@ -7,7 +7,9 @@ const viewProfile=async(req,res)=>{
         if(!user){
             throw new Error("User not found...");
         }
-        res.send(user);
+        res.json({
+            "user":user
+        });
     }
 
     catch(err){
@@ -46,7 +48,9 @@ const editPassword=async(req,res)=>{
         // console.log("loggedin user"+loggedInUser);
         // console.log("loggedin user.password"+loggedInUser.password);
         await loggedInUser.save();
-        res.send("Password changed Successfully...");
+        res.json({
+            "message":"Password changed Successfully..."
+        });
     }
     catch(err){
         res.send(err.message);

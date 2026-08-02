@@ -14,11 +14,13 @@ const userAuth=async(req,res,next)=>{
         const {_id}=decodedData;
         
 
-        //Find the user form DB using the _id
-        const user=await User.findById(_id);
+        //Find the user form DB using the _id and explicitly attach password
+        const user=await User.findById(_id).select("+password");
         if(!user){
             throw new Error("User not found...");
         }
+
+        // console.log("Middleware password:", user.password);
 
         //Attach the user to the req object so that it can be used to find the user data in  request handler
         req.user=user;

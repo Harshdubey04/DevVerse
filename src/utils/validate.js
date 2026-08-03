@@ -1,5 +1,6 @@
 const validator = require('validator');
-const bcrypt=require("bcrypt");
+const bcrypt = require("bcrypt");
+const {User}=require('../models/user');
 
 const validateSignupData = (req) => {
     const { firstName, password, emailId } = req.body;
@@ -104,7 +105,7 @@ const validateProfileEditData = (req) => {
 
     if (
         req.body.gender &&
-       !["MALE", "FEMALE", "OTHER"].includes(req.body.gender.toUpperCase())
+        !["MALE", "FEMALE", "OTHER"].includes(req.body.gender.toUpperCase())
     ) {
         throw new Error("Invalid gender");
     }
@@ -112,29 +113,61 @@ const validateProfileEditData = (req) => {
 };
 
 
-const validateEditPassword=async (req)=>{
-    try{
-        const {password,newPassword}=req.body;
-        const hashedPassword=req.user.password;
-        
-        const isValidPassword=await bcrypt.compare(password,hashedPassword);
-        if(!isValidPassword){
+const validateEditPassword = async (req) => {
+    try {
+        const { password, newPassword } = req.body;
+        const hashedPassword = req.user.password;
+
+        const isValidPassword = await bcrypt.compare(password, hashedPassword);
+        if (!isValidPassword) {
             throw new Error("Current password is not correct...");
         }
-        if(!validator.isStrongPassword(newPassword)){
+        if (!validator.isStrongPassword(newPassword)) {
             throw new Error("New password is not strong,please make a strong password...");
         }
-        if(password===newPassword){
+        if (password === newPassword) {
             throw new Error("New password must be different with the current password...");
         }
 
     }
-    catch(err){
-        throw new Error(err.message);    
+    catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+const validateConnectionRequest = async(req) => {
+    try {
+        const fromUserId = req.user._id;
+        const toUserId = req.params.toUserId;
+        const status = req.params.status;
+        const allowedStatus = ["interested", "ignored"];
+
+        if (fromUserId.toString() === toUserId) {
+            throw new Error("You cannot send a connection request to yourself.");
+        }
+
+        if (!allowedStatus.includes(status)) {
+            throw new Error("Invalid status type.");
+        }
+
+        const user=await User.findOne({_id:toUserId});
+        if(!user){
+            throw new Error("User not found...")
+        }      
+
+    }
+    catch (err) {
+        throw new Error(err.message);
     }
 }
 
 
 
 
-module.exports = { validateSignupData, validateLoginData,validateProfileEditData,validateEditPassword };
+module.exports = {
+    validateSignupData,
+    validateLoginData,
+    validateProfileEditData,
+    validateEditPassword,
+    validateConnectionRequest,
+};

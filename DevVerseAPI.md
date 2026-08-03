@@ -10,8 +10,10 @@
 -PATCH/profile/password
 
 ## connectionRequestRouter
--POST/request/send/intrested/:userId
--POST/request/send/ignored/:userId
+-POST/request/send/status:/:userId
+where status->ignored/interested
+
+
 -POST/request/review/accepted/:requestId
 -POST/request/review/rejected/:requestId
 
@@ -20,4 +22,4 @@
 -GET/user/requests
 -GET/user/feed
 
-Stauts:Ignore,intrested,accepted,rejected
+Stauts:Ignored,intrested,accepted,rejected

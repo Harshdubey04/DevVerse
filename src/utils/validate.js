@@ -1,6 +1,7 @@
 const validator = require('validator');
 const bcrypt = require("bcrypt");
 const {User}=require('../models/user');
+const { ConnectionRequest } = require('../models/connectionRequestSchema');
 
 const validateSignupData = (req) => {
     const { firstName, password, emailId } = req.body;
@@ -161,6 +162,20 @@ const validateConnectionRequest = async(req) => {
     }
 }
 
+const validateConnectionReview=(req)=>{
+    try{
+        const {status}=req.params;
+        const allowedStatus=["accepted","rejected"];
+
+        if(!allowedStatus.includes(status)){
+            throw new Error("Invalid status type.");
+        }       
+    }
+    catch(err){
+        throw new Error(err.message);
+    }
+}
+
 
 
 
@@ -170,4 +185,5 @@ module.exports = {
     validateProfileEditData,
     validateEditPassword,
     validateConnectionRequest,
+    validateConnectionReview
 };

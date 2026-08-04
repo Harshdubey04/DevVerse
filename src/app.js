@@ -16,11 +16,12 @@ app.use(cookieParser());//Cookie parser middleware
 const authRouter=require('./routes/authRouter');
 const profileRouter=require('./routes/profileRouter');
 const connectionRequestRouter=require('./routes/connectionRequestRouter');
+const userRouter=require('./routes/userRouter');
 
 app.use("/",authRouter);
 app.use("/profile",profileRouter);
 app.use('/request',connectionRequestRouter);
-
+app.use('/user',userRouter);
 
 
 connectDB()

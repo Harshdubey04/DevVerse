@@ -11,13 +11,14 @@ const signup=async(req,res)=>{
     try{      
         //Validating the signup data
         validateSignupData(req);
-        const {emailId,password,firstName,lastName}=req.body;
+        const {emailId,password,firstName,lastName,age,gender,photoURL,about,skills}=req.body;
 
         //Hashing the password
         const hashedPassword=await bcrypt.hash(password,10);
 
         const user=new User({
-            firstName,lastName,emailId,password:hashedPassword
+            firstName,lastName,emailId,password:hashedPassword,
+            age,gender,photoURL,about,skills
         });
 
         await user.save();

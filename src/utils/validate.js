@@ -154,7 +154,9 @@ const validateConnectionRequest = async(req) => {
         const user=await User.findOne({_id:toUserId});
         if(!user){
             throw new Error("User not found...")
-        }      
+        }   
+        
+        return user;
 
     }
     catch (err) {

@@ -1,15 +1,18 @@
 const { ConnectionRequest } = require('../models/connectionRequestSchema');
 const { validateConnectionRequest, validateConnectionReview } = require('../utils/validate');
+const {User}=require('../models/user');
 
 
 
 const sendInterestedRequest = async (req, res) => {
     try {
-        await validateConnectionRequest(req);
+        const toUser= await validateConnectionRequest(req);
+        const loggedInUser = req.user;
 
         const fromUserId = req.user._id;
         const toUserId = req.params.toUserId;
         const status = req.params.status;
+
 
         const existingConnectionRequest = await ConnectionRequest.findOne({
             $or: [
@@ -19,7 +22,7 @@ const sendInterestedRequest = async (req, res) => {
         })
 
         if (existingConnectionRequest) {
-            res.status(400).json({
+            return res.status(400).json({
                 "message": "Connection request already sent..."
             })
         }
@@ -33,7 +36,7 @@ const sendInterestedRequest = async (req, res) => {
 
         const data = await connectionRequest.save();
         res.status(201).json({
-            message: `${fromUserId.firstName} sent an ${status} request to ${toUser.firstName}.`,
+            message: `${loggedInUser.firstName} sent an ${status} request to ${toUser.firstName}.`,
             data,
         });
     }

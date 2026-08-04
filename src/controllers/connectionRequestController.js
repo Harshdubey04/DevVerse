@@ -1,6 +1,5 @@
 const { ConnectionRequest } = require('../models/connectionRequestSchema');
 const { validateConnectionRequest, validateConnectionReview } = require('../utils/validate');
-const {User}=require('../models/user');
 
 
 

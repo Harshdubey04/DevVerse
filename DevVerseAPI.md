@@ -24,8 +24,8 @@ where status->accepted/rejected
 
 ## Feed logic
 if Virat is logged in user then Virat should not see-
-Users to whom Virat has already sent a request (interested or ignored)
-Users who have sent a request to Virat
-Users who are already connected with Virat (accepted)
+-Users to whom Virat has already sent a request (interested or ignored)
+-Users who have sent a request to Virat
+-Users who are already connected with Virat (accepted)
 
 Stauts:Ignored,intrested,accepted,rejected

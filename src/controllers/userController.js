@@ -1,80 +1,113 @@
 const { ConnectionRequest } = require('../models/connectionRequestSchema');
+const { User } = require('../models/user');
 
 //Get all pending connection request of the logged in user
-const requestRecieved=async(req,res)=>{
-    try{
-        const loggedInUser=req.user;
+const requestRecieved = async (req, res) => {
+    try {
+        const loggedInUser = req.user;
         // console.log("logged in user: "+loggedInUser);
 
-        const connectionRequests=await ConnectionRequest.find({
-            toUserId:loggedInUser._id,
-            status:"interested"
-        }).populate("fromUserId","firstName lastName photoURL age gender about gender");
+        const connectionRequests = await ConnectionRequest.find({
+            toUserId: loggedInUser._id,
+            status: "interested"
+        }).populate("fromUserId", "firstName lastName photoURL age gender about gender");
 
-        const data=connectionRequests.map((req)=>req.fromUserId);
+        const data = connectionRequests.map((req) => req.fromUserId);
 
         res.status(200).json({
-            data:data
+            data: data
         });
 
     }
-    catch(err){
+    catch (err) {
         res.status(400).send(err.message);
     }
 }
 
 //Get all the connections of a logged in user
-const getConnections=async(req,res)=>{
-    try{
-        const loggedInUser=req.user;
+const getConnections = async (req, res) => {
+    try {
+        const loggedInUser = req.user;
 
-        const connections=await ConnectionRequest.find({
-            $or:[
-                {toUserId:loggedInUser._id},
-                {fromUserId:loggedInUser._id}
+        const connections = await ConnectionRequest.find({
+            $or: [
+                { toUserId: loggedInUser._id },
+                { fromUserId: loggedInUser._id }
             ],
-            status:"accepted"
-        }).populate("fromUserId","firstName lastName photoURL age gender about gender")
-          .populate("toUserId","firstName lastName photoURL age gender about gender")
+            status: "accepted"
+        }).populate("fromUserId", "firstName lastName photoURL age gender about gender")
+            .populate("toUserId", "firstName lastName photoURL age gender about gender")
 
-          const data=connections.map((conn)=>{
-            if(loggedInUser._id.toString()===conn.fromUserId._id.toString()){
+        const data = connections.map((conn) => {
+            if (loggedInUser._id.toString() === conn.fromUserId._id.toString()) {
                 return conn.toUserId;
             }
-            else{
+            else {
                 return conn.fromUserId;
             }
-          })
+        })
 
-          res.send(data);
+        res.send(data);
     }
-    catch(err){
+    catch (err) {
         res.status(400).send(err.message);
     }
 }
 
 //Feed API
-const userFeed=async(req,res)=>{
-    try{
+const userFeed = async (req, res) => {
+    try {
+        const USER_SAFE_DATA = "firstName lastName photoURL about skills age gender";
+        const loggedInUser = req.user;
+        const page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
 
-        const loggedInUser=req.user;
+        limit = limit > 10 ? 10 : limit;
+        const skip = (page - 1) * limit;
 
         //Find all the connections sent or recieved by loggeed in user
-        const connections=await ConnectionRequest.find({
-            $or:[
-                {fromUserId:loggedInUser._id},
-                {toUserId:loggedInUser._id}
+        const connectionRequests = await ConnectionRequest.find({
+            $or: [
+                { fromUserId: loggedInUser._id },
+                { toUserId: loggedInUser._id }
             ]
-        }).select("fromUserId toUserId").populate("fromUserId","firstName lastName").populate("toUserId","firstName lastName");
+        }).select("fromUserId toUserId");
 
-        res.send(connections);
+        //Find the unique ids of the hidden users
+        const hiddenUsersFromFeed = new Set();
+
+        connectionRequests.forEach((req) => {
+            hiddenUsersFromFeed.add(req.fromUserId.toString());
+            hiddenUsersFromFeed.add(req.toUserId.toString());
+        });
+
+        //Find all the users who are not hidden form feed and not the loggedIn user
+        const allowedUsers = await User.find({
+            $and: [
+                { _id: { $nin: Array.from(hiddenUsersFromFeed) } },
+                { _id: { $ne: loggedInUser._id } }
+            ]
+        }).select(USER_SAFE_DATA)
+            .skip(skip)
+            .limit(limit);
+
+        if (allowedUsers.length === 0) {
+            return res.status(200).json({
+                message: "No more users found for this page...",
+                users: []
+            })
+        }
+
+        res.status(200).json({
+            users: allowedUsers,
+        });
     }
-    catch(err){
+    catch (err) {
         res.status(400).send(err.message);
     }
 }
 
-module.exports={
+module.exports = {
     requestRecieved,
     getConnections,
     userFeed

@@ -5,7 +5,7 @@ const { validateConnectionRequest, validateConnectionReview } = require('../util
 
 const sendInterestedRequest = async (req, res) => {
     try {
-        const toUser= await validateConnectionRequest(req);
+        const toUser = await validateConnectionRequest(req);
         const loggedInUser = req.user;
 
         const fromUserId = req.user._id;
@@ -21,9 +21,10 @@ const sendInterestedRequest = async (req, res) => {
         })
 
         if (existingConnectionRequest) {
-            return res.status(400).json({
-                "message": "Connection request already sent..."
-            })
+            return res.status(409).json({
+                success: false,
+                message: "Connection request already sent.",
+            });
         }
 
         //Creating new connection request
@@ -34,13 +35,17 @@ const sendInterestedRequest = async (req, res) => {
         })
 
         const data = await connectionRequest.save();
-        res.status(201).json({
+        return res.status(201).json({
+            success: true,
             message: `${loggedInUser.firstName} sent an ${status} request to ${toUser.firstName}.`,
             data,
         });
     }
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 }
 
@@ -58,14 +63,16 @@ const reviewConnectionRequest = async (req, res) => {
 
         if (!connectionRequest) {
             return res.status(404).json({
-                message: "Connection request not found."
+                success: false,
+                message: "Connection request not found.",
             });
         }
 
         //If Connection request is already accepted/rejected
         if (connectionRequest.status !== "interested") {
-            return res.status(400).json({
-                message: `Connection request already ${connectionRequest.status}.`
+            return res.status(409).json({
+                success: false,
+                message: `Connection request already ${connectionRequest.status}.`,
             });
         }
         //Update the status of connection request
@@ -74,13 +81,17 @@ const reviewConnectionRequest = async (req, res) => {
         //save in DB
         const data = await connectionRequest.save();
 
-        res.status(200).json({
-            message: "Connection request " + status,
-            data: data
-        })
+        return res.status(200).json({
+            success: true,
+            message: `Connection request ${status}.`,
+            data,
+        });
     }
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 }
 

@@ -14,13 +14,18 @@ const requestRecieved = async (req, res) => {
 
         const data = connectionRequests.map((req) => req.fromUserId);
 
-        res.status(200).json({
-            data: data
+        return res.status(200).json({
+            success: true,
+            message: "Pending connection requests fetched successfully.",
+            data,
         });
 
     }
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 }
 
@@ -47,10 +52,17 @@ const getConnections = async (req, res) => {
             }
         })
 
-        res.send(data);
+        return res.status(200).json({
+            success: true,
+            message: "Connections fetched successfully.",
+            data,
+        });
     }
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 }
 
@@ -93,17 +105,23 @@ const userFeed = async (req, res) => {
 
         if (allowedUsers.length === 0) {
             return res.status(200).json({
-                message: "No more users found for this page...",
-                users: []
-            })
+                success: true,
+                message: "No more users found for this page.",
+                data: [],
+            });
         }
 
-        res.status(200).json({
-            users: allowedUsers,
+        return res.status(200).json({
+            success: true,
+            message: "Feed fetched successfully.",
+            data: allowedUsers,
         });
     }
     catch (err) {
-        res.status(400).send(err.message);
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 }
 

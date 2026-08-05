@@ -54,6 +54,7 @@ const login = async (req, res) => {
         const isPassValid = await user.validatePassword(password);
 
         if (isPassValid) {
+            //Removing password form the user data
             const userData=user.toObject();
             delete userData.password;
 

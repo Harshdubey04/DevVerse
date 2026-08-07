@@ -15,12 +15,12 @@ const validateSignupData = (req) => {
     }
 
     if (!validator.isEmail(emailId)) {
-        throw new error("Please enter a correct email id...");
+        throw new Error("Please enter a correct email id...");
 
     }
 
     if (!validator.isStrongPassword(password)) {
-        throw new error("Please enter a strong password...");
+        throw new Error("Please enter a strong password...");
     }
 
 
@@ -34,13 +34,11 @@ const validateLoginData = (req) => {
     }
 
     if (!validator.isEmail(emailId)) {
-        throw new error("Please enter a correct email id...");
+        throw new Error("Please enter a correct email id...");
 
     }
 
-    if (!validator.isStrongPassword(password)) {
-        throw new error("Please enter a strong password...");
-    }
+ 
 }
 
 const validateProfileEditData = (req) => {
@@ -177,9 +175,6 @@ const validateConnectionReview=(req)=>{
         throw new Error(err.message);
     }
 }
-
-
-
 
 module.exports = {
     validateSignupData,

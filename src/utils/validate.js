@@ -34,11 +34,9 @@ const validateLoginData = (req) => {
     }
 
     if (!validator.isEmail(emailId)) {
-        throw new Error("Please enter a correct email id...");
+        throw new Error("Please enter a valid email id...");
 
     }
-
- 
 }
 
 const validateProfileEditData = (req) => {
@@ -83,7 +81,7 @@ const validateProfileEditData = (req) => {
 
     if (
         req.body.about &&
-        req.body.about.length > 200
+        req.body.about.length > 500
     ) {
         throw new Error("About cannot exceed 200 characters");
     }
@@ -97,14 +95,14 @@ const validateProfileEditData = (req) => {
 
     if (
         req.body.age &&
-        (req.body.age < 15 && req.body.age > 101)
+        (req.body.age < 15 || req.body.age > 101)
     ) {
         throw new Error("Age must be at least 15 and 101");
     }
 
     if (
         req.body.gender &&
-        !["MALE", "FEMALE", "OTHER"].includes(req.body.gender.toUpperCase())
+        !["MALE", "FEMALE", "OTHERS"].includes(req.body.gender.toUpperCase())
     ) {
         throw new Error("Invalid gender");
     }

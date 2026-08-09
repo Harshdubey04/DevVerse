@@ -10,10 +10,17 @@ const cookieParser=require("cookie-parser");
 const {userAuth}=require("./middleware/auth");
 const cors=require("cors");
 
-app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true,
-}));
+
+
+const corsOptions = {
+    origin: "http://localhost:5173",
+    methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 //Middleware to convert the json to js object so that server can understand it because server only understand js object
 app.use(express.json());
 app.use(cookieParser());//Cookie parser middleware

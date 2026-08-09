@@ -6,6 +6,6 @@ const {sendInterestedRequest,reviewConnectionRequest}=require("../controllers/co
 
 
 connectionRequestRouter.post("/send/:status/:toUserId",userAuth,sendInterestedRequest);
-connectionRequestRouter.post("/review/:status/:requestId",userAuth,reviewConnectionRequest);
+connectionRequestRouter.patch("/review/:status/:requestId",userAuth,reviewConnectionRequest);
 
 module.exports=connectionRequestRouter;

@@ -12,7 +12,8 @@ const requestRecieved = async (req, res) => {
             status: "interested"
         }).populate("fromUserId", "firstName lastName photoURL age gender about gender");
 
-        const data = connectionRequests.map((req) => req.fromUserId);
+        // const data = connectionRequests.map((req) => req.fromUserId);
+        const data=connectionRequests;
 
         return res.status(200).json({
             success: true,

@@ -20,10 +20,24 @@ const signup = async (req, res) => {
         });
 
         await user.save();
+
+        
+        const token = await user.getJWT();
+
+        
+        res.cookie("token", token, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 8 * 3600000)
+        });
+
+        // Don't send password to frontend
+        const userData = user.toObject();
+        delete userData.password;
+
         return res.status(201).json({
             success: true,
             message: "Account created successfully.",
-            data: user,
+            data: userData,
         });
     }
 

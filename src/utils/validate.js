@@ -58,12 +58,12 @@ const validateProfileEditData = (req) => {
         throw new Error("Invalid edit request");
     }
 
-    if (
-        req.body.photoURL &&
-        !validator.isURL(req.body.photoURL)
-    ) {
-        throw new Error("Invalid Photo URL");
-    }
+    // if (
+    //     req.body.photoURL &&
+    //     !validator.isURL(req.body.photoURL)
+    // ) {
+    //     throw new Error("Invalid Photo URL");
+    // }
 
     if (
         req.body.firstName &&

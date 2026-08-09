@@ -1,5 +1,6 @@
 const { validateProfileEditData, validateEditPassword } = require("../utils/validate");
 const bcrypt = require('bcrypt');
+const {User}=require('../models/user')
 
 const viewProfile = async (req, res) => {
     try {
@@ -70,8 +71,39 @@ const editPassword = async (req, res) => {
     }
 }
 
+const viewUserProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const USER_SAFE_DATA ="firstName lastName photoURL about skills age gender";
+
+    const user = await User.findById(userId).select(USER_SAFE_DATA);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User profile fetched successfully.",
+      data: user,
+    });
+  } catch (error) {
+    console.error("VIEW USER PROFILE ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user profile.",
+    });
+  }
+};
+
 module.exports = {
     viewProfile,
     editProfile,
     editPassword,
+    viewUserProfile,
 }

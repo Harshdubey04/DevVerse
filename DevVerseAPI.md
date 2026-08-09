@@ -14,13 +14,14 @@
 where status->ignored/interested
 
 
--POST/request/review/status:/:requestId
-where status->accepted/rejected
+-POST/request/review/status:/:ConnectionId
+where status->accepted/rejected 
 
 ## userRouter 
 -GET/user/connections
 -GET/user/requests/received
 -GET/user/feed
+-GET user/:id
 
 ## Feed logic
 if Virat is logged in user then Virat should not see-
